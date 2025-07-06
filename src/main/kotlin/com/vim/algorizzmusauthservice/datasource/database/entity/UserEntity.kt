@@ -8,15 +8,15 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0
 
-    @Column(name="username", unique = true)
+    @Column(name = "username", unique = true)
     var username: String = ""
 
-    @Column(name="password")
+    @Column(name = "password")
     var password: String = ""
 }

@@ -5,4 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserJPARepository: JpaRepository<UserEntity, Long>
+interface UserJPARepository : JpaRepository<UserEntity, Long>
