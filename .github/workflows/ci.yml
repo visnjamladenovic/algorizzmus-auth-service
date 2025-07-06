@@ -24,3 +24,5 @@ jobs:
 
       - name: Build and run tests with Gradle
         run: ./gradlew build
+        env:
+          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
