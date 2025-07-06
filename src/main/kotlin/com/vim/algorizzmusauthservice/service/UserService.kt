@@ -11,10 +11,9 @@ import org.springframework.stereotype.Service
 class UserService(private val repository: UserRepository) {
     fun getUserById(id: Long): UserEntity {
         val user = repository.getUserById(id)
-        if (user.isEmpty)
-            {
-                throw UserNotFoundException("User not found with id: $id")
-            }
+        if (user.isEmpty) {
+            throw UserNotFoundException("User not found with id: $id")
+        }
         return user.get()
     }
 
