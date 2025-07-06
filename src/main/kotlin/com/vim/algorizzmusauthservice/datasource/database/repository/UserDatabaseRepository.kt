@@ -8,8 +8,8 @@ import java.util.Optional
 
 @Component
 class UserDatabaseRepository(
-    private val userJPARepository: UserJPARepository
-): UserRepository{
+    private val userJPARepository: UserJPARepository,
+) : UserRepository {
     override fun getUserById(id: Long): Optional<UserEntity> {
         return userJPARepository.findById(id)
     }

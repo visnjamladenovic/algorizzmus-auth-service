@@ -6,6 +6,7 @@ plugins {
     id("org.flywaydb.flyway") version "11.10.1"
     id("co.uzzu.dotenv.gradle") version "4.0.0"
     kotlin("plugin.jpa") version "1.9.25"
+    id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
 }
 
 group = "com.vim"
@@ -38,7 +39,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
 }
 
 kotlin {

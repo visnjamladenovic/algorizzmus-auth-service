@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class UserController(private val userService: UserService) {
     @GetMapping("/users/{id}")
-    fun getUserById(@PathVariable id: Long): ResponseEntity<UserEntity> {
+    fun getUserById(
+        @PathVariable id: Long,
+    ): ResponseEntity<UserEntity> {
         return ResponseEntity.ok(
-            userService.getUserById(id).get()
+            userService.getUserById(id).get(),
         )
     }
 }
