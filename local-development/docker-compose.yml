@@ -4,7 +4,7 @@ services:
     container_name: postgres_db
     environment:
       POSTGRES_USER: algorizzmus
-      POSTGRES_PASSWORD: PtWBaWJGGbHiSrC
+      POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
       POSTGRES_DB: algorizzmus-auth-service-db
     ports:
       - "5432:5432"
