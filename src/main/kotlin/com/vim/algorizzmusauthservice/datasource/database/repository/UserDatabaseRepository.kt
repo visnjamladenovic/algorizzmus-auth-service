@@ -13,4 +13,23 @@ class UserDatabaseRepository(
     override fun getUserById(id: Long): Optional<UserEntity> {
         return userJPARepository.findById(id)
     }
+
+    override fun saveUser(userEntity: UserEntity): UserEntity {
+        return userJPARepository.save(userEntity)
+    }
+
+    override fun findUserByUsername(username: String): Optional<UserEntity> {
+        return userJPARepository.findByUsername(username)
+    }
+
+    override fun findUserByUsernameAndPassword(
+        username: String,
+        password: String,
+    ): Optional<UserEntity> {
+        return userJPARepository.findByUsernameAndPassword(username, password)
+    }
+
+    override fun deleteUserById(id: Long) {
+        userJPARepository.deleteById(id)
+    }
 }
