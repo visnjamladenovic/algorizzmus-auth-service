@@ -5,4 +5,8 @@ import java.util.Optional
 
 interface UserRepository {
     fun getUserById(id: Long): Optional<UserEntity>
+
+    fun saveUser(user: UserEntity): UserEntity
+
+    fun existsByUsername(username: String): Boolean
 }
