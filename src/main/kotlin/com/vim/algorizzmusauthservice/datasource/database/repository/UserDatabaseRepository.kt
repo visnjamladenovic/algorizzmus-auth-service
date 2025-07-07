@@ -13,4 +13,12 @@ class UserDatabaseRepository(
     override fun getUserById(id: Long): Optional<UserEntity> {
         return userJPARepository.findById(id)
     }
+
+    override fun saveUser(user: UserEntity): UserEntity {
+        return userJPARepository.save(user)
+    }
+
+    override fun existsByUsername(username: String): Boolean {
+        return userJPARepository.existsByUsername(username)
+    }
 }
