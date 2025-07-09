@@ -10,7 +10,7 @@ import java.util.Optional
 @Service
 class UserService(
     private val repository: UserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
 ) {
     fun getUserById(id: Long): Optional<UserEntity> {
         return repository.getUserById(id)
