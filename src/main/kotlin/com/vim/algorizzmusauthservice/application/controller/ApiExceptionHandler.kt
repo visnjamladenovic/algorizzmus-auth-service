@@ -1,6 +1,6 @@
 package com.vim.algorizzmusauthservice.application.controller
 
-import com.vim.algorizzmusauthservice.application.model.ApiErrorResponse
+import com.vim.algorizzmusauthservice.application.response.ApiErrorResponse
 import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

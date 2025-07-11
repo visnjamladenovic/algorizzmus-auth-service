@@ -3,6 +3,9 @@ package com.vim.algorizzmusauthservice.service
 import com.vim.algorizzmusauthservice.datasource.UserRepository
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
 import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsException
+import com.vim.algorizzmusauthservice.service.mapper.toUser
+import com.vim.algorizzmusauthservice.service.model.UserDTO
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.Optional
@@ -11,7 +14,7 @@ import java.util.Optional
 class UserService(
     private val repository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-) {
+) : UserDetailsService {
     fun getUserById(id: Long): Optional<UserEntity> {
         return repository.getUserById(id)
     }
@@ -22,5 +25,9 @@ class UserService(
         }
         user.password = passwordEncoder.encode(user.password)
         return repository.saveUser(user)
+    }
+
+    override fun loadUserByUsername(username: String): UserDTO {
+        return repository.getUserByUsername(username).get().toUser()
     }
 }

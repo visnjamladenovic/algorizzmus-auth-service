@@ -21,4 +21,8 @@ class UserDatabaseRepository(
     override fun existsByUsername(username: String): Boolean {
         return userJPARepository.existsByUsername(username)
     }
+
+    override fun getUserByUsername(username: String): Optional<UserEntity> {
+        return userJPARepository.getUserByUsername(username)
+    }
 }

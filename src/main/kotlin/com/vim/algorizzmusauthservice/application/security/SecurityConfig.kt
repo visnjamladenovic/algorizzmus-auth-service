@@ -1,0 +1,79 @@
+package com.vim.algorizzmusauthservice.application.security
+
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer
+import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
+
+@Configuration
+@EnableWebSecurity
+class SecurityConfiguration {
+    companion object {
+        private const val CORS_MAPPING_PATTERN: String = "/**"
+        private const val ALLOWED_METHODS_ALL: String = "*"
+    }
+
+    /**
+     * Configures the main security filter chain.
+     *
+     * @param http The HttpSecurity to configure
+     * @return The configured SecurityFilterChain
+     * @throws Exception if an error occurs during configuration
+     */
+    @Bean
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        return http
+            .cors(Customizer.withDefaults())
+            .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
+            .sessionManagement {
+                    session: SessionManagementConfigurer<HttpSecurity?> ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .authorizeHttpRequests { auth ->
+                auth
+                    .requestMatchers("/**")
+                    .permitAll()
+                    .anyRequest().authenticated()
+            }
+            .build()
+    }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    /**
+     * Configures the CORS filter.
+     *
+     * @return Configured CorsFilter
+     */
+    @Bean
+    fun corsFilter(): CorsFilter {
+        return CorsFilter(createCorsConfiguration())
+    }
+
+    /**
+     * Creates CORS configuration.
+     *
+     * @return Configured UrlBasedCorsConfigurationSource
+     */
+    private fun createCorsConfiguration(): UrlBasedCorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.addAllowedOriginPattern("*")
+        configuration.allowedMethods = listOf(ALLOWED_METHODS_ALL)
+        configuration.allowCredentials = true
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration(CORS_MAPPING_PATTERN, configuration)
+        return source
+    }
+}
