@@ -1,8 +1,13 @@
 package com.vim.algorizzmusauthservice.application.controller
 
+import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
+import com.vim.algorizzmusauthservice.application.response.AuthResponse
+import com.vim.algorizzmusauthservice.application.security.JwtGenerator
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
 import com.vim.algorizzmusauthservice.service.UserService
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,7 +17,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/users")
-class UserController(private val userService: UserService) {
+class UserController(
+    private val userService: UserService,
+    private val authenticationManager: AuthenticationManager,
+    private val jwtGenerator: JwtGenerator,
+) {
     @GetMapping("/{id}")
     fun getUserById(
         @PathVariable id: Long,
@@ -27,5 +36,20 @@ class UserController(private val userService: UserService) {
         @RequestBody user: UserEntity,
     ): ResponseEntity<UserEntity> {
         return ResponseEntity.ok(userService.registerUser(user))
+    }
+
+    @PostMapping("/login")
+    fun loginUser(
+        @RequestBody authenticationRequest: AuthenticationRequest,
+    ): ResponseEntity<AuthResponse> {
+        val authenticationToken =
+            UsernamePasswordAuthenticationToken(
+                authenticationRequest.username,
+                authenticationRequest.password,
+            )
+        val user = authenticationManager.authenticate(authenticationToken)
+        val jwtToken = jwtGenerator.generateToken(user)
+
+        return ResponseEntity.ok(AuthResponse(jwtToken))
     }
 }

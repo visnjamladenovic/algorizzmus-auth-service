@@ -9,4 +9,6 @@ interface UserRepository {
     fun saveUser(user: UserEntity): UserEntity
 
     fun existsByUsername(username: String): Boolean
+
+    fun getUserByUsername(username: String): Optional<UserEntity>
 }
