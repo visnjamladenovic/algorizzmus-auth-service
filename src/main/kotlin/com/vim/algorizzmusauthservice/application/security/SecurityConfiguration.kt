@@ -25,7 +25,7 @@ import org.springframework.web.filter.CorsFilter
 @EnableWebSecurity
 @EnableMethodSecurity
 class SecurityConfiguration(
-    private val jwtAuthFilter: JwtAuthFilter
+    private val jwtAuthFilter: JwtAuthFilter,
 ) {
     companion object {
         private const val CORS_MAPPING_PATTERN: String = "/**"

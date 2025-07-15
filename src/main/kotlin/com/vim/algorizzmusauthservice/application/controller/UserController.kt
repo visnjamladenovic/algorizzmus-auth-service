@@ -23,8 +23,7 @@ class UserController(
     private val authenticationManager: AuthenticationManager,
     private val jwtGenerator: JwtGenerator,
     private val passwordEncoder: PasswordEncoder,
-
-    ) {
+) {
     @GetMapping("/{id}")
     fun getUserById(
         @PathVariable id: Long,
