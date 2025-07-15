@@ -26,6 +26,24 @@ class JwtGenerator {
             .compact()
     }
 
+    fun extractUsername(token: String): String {
+        return Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .body
+            .subject
+    }
+
+    fun validateToken(token: String): Boolean {
+        return try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     companion object {
         private const val AUTHORITIES = "authorities"
         private const val EXPIRATION = 3600000

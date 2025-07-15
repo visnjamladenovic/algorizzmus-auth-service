@@ -13,7 +13,6 @@ import java.util.Optional
 @Service
 class UserService(
     private val repository: UserRepository,
-    private val passwordEncoder: PasswordEncoder,
 ) : UserDetailsService {
     fun getUserById(id: Long): Optional<UserEntity> {
         return repository.getUserById(id)
@@ -23,7 +22,6 @@ class UserService(
         if (repository.existsByUsername(user.username)) {
             throw UserAlreadyExistsException("User ${user.username} already exists")
         }
-        user.password = passwordEncoder.encode(user.password)
         return repository.saveUser(user)
     }
 

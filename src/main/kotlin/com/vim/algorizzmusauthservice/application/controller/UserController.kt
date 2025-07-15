@@ -8,6 +8,7 @@ import com.vim.algorizzmusauthservice.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,7 +22,9 @@ class UserController(
     private val userService: UserService,
     private val authenticationManager: AuthenticationManager,
     private val jwtGenerator: JwtGenerator,
-) {
+    private val passwordEncoder: PasswordEncoder,
+
+    ) {
     @GetMapping("/{id}")
     fun getUserById(
         @PathVariable id: Long,
@@ -35,6 +38,7 @@ class UserController(
     fun registerUser(
         @RequestBody user: UserEntity,
     ): ResponseEntity<UserEntity> {
+        user.password = passwordEncoder.encode(user.password)
         return ResponseEntity.ok(userService.registerUser(user))
     }
 
