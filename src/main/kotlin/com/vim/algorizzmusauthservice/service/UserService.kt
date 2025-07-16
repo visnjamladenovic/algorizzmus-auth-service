@@ -6,14 +6,12 @@ import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsExcepti
 import com.vim.algorizzmusauthservice.service.mapper.toUser
 import com.vim.algorizzmusauthservice.service.model.UserDTO
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.Optional
 
 @Service
 class UserService(
     private val repository: UserRepository,
-    private val passwordEncoder: PasswordEncoder,
 ) : UserDetailsService {
     fun getUserById(id: Long): Optional<UserEntity> {
         return repository.getUserById(id)
@@ -23,7 +21,6 @@ class UserService(
         if (repository.existsByUsername(user.username)) {
             throw UserAlreadyExistsException("User ${user.username} already exists")
         }
-        user.password = passwordEncoder.encode(user.password)
         return repository.saveUser(user)
     }
 

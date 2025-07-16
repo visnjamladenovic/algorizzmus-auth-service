@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
@@ -23,7 +24,9 @@ import org.springframework.web.filter.CorsFilter
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfiguration {
+class SecurityConfiguration(
+    private val jwtAuthFilter: JwtAuthFilter,
+) {
     companion object {
         private const val CORS_MAPPING_PATTERN: String = "/**"
         private const val ALLOWED_METHODS_ALL: String = "*"
@@ -48,10 +51,11 @@ class SecurityConfiguration {
             }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/**")
+                    .requestMatchers("/users/login", "/users/register")
                     .permitAll()
                     .anyRequest().authenticated()
             }
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
     }
 
