@@ -51,7 +51,18 @@ class SecurityConfiguration(
             }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/users/login", "/users/register")
+                    .requestMatchers(
+                        "/users/login",
+                        "/users/register",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/index.html",
+                        "/v3/api-docs/**",
+                        "/v3/api-docs.yaml",
+                        "/webjars/**",
+                        "/swagger-resources/**",
+                        "/swagger-resources",
+                    )
                     .permitAll()
                     .anyRequest().authenticated()
             }
