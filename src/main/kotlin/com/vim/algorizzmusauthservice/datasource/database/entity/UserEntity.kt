@@ -14,9 +14,21 @@ class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0
 
+    @Column(name = "name")
+    var name: String = ""
+
+    @Column(name = "surname")
+    var surname: String = ""
+
     @Column(name = "username", unique = true)
     var username: String = ""
 
     @Column(name = "password")
     var password: String = ""
+
+    @Column(name = "email", unique = true)
+    var email: String = ""
+
+    @Column(name = "is_email_verified")
+    var isEmailVerified: Boolean = false
 }
