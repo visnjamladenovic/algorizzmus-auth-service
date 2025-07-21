@@ -14,21 +14,18 @@ import java.util.UUID
 
 @Entity
 @Table(name = "email_verification_tokens")
-class EmailVerificationTokenEntity {
+class EmailVerificationTokenEntity(
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    val user: UserEntity,
+    @Column(nullable = false, unique = true)
+    var token: String = UUID.randomUUID().toString(),
+    @Column(nullable = false)
+    var expirationDate: LocalDateTime = LocalDateTime.now().plusHours(24),
+    @Column(nullable = false)
+    var isVerified: Boolean = false,
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
-
-    @Column(nullable = false, unique = true)
-    var token: String? = UUID.randomUUID().toString()
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: UserEntity? = null
-
-    @Column(nullable = false)
-    var expirationDate: LocalDateTime = LocalDateTime.now().plusHours(24)
-
-    @Column(nullable = false)
-    var isVerified: Boolean = false
 }
