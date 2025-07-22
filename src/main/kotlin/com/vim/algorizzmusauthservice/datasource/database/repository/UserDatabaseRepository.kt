@@ -25,4 +25,8 @@ class UserDatabaseRepository(
     override fun getUserByUsername(username: String): Optional<UserEntity> {
         return userJPARepository.getUserByUsername(username)
     }
+
+    override fun findUserByEmail(email: String): UserEntity? {
+        return userJPARepository.findUserByEmail(email)
+    }
 }

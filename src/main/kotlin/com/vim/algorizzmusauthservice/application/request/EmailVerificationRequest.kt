@@ -1,5 +1,5 @@
 package com.vim.algorizzmusauthservice.application.request
 
-class EmailVerificationRequest {
-    val email: String = ""
-}
+data class EmailVerificationRequest(
+    val email: String,
+)

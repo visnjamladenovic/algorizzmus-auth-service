@@ -1,7 +1,7 @@
 package com.vim.algorizzmusauthservice.application.controller
 
 import com.vim.algorizzmusauthservice.application.request.EmailVerificationRequest
-import com.vim.algorizzmusauthservice.service.EmailService
+import com.vim.algorizzmusauthservice.service.EmailVerificationTokenService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/auth")
-class AuthController(private val emailService: EmailService) {
+class AuthController(private val emailVerificationTokenService: EmailVerificationTokenService) {
     @PostMapping("/verify_email")
-    fun sendVerificationEmail(@RequestBody request: EmailVerificationRequest): ResponseEntity<String> {
-        emailService.sendVerificationEmail(request.email, token = "dummy token")
+    fun sendVerification(
+        @RequestBody request: EmailVerificationRequest,
+    ): ResponseEntity<String> {
+        emailVerificationTokenService.generateAndSendToken(request.email)
         return ResponseEntity.ok("Verification email sent successfully.")
     }
 }
