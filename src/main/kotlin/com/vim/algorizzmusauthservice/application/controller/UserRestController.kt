@@ -5,6 +5,7 @@ import com.vim.algorizzmusauthservice.application.response.AuthResponse
 import com.vim.algorizzmusauthservice.application.security.JwtGenerator
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
 import com.vim.algorizzmusauthservice.service.UserService
+import com.vim.algorizzmusauthservice.service.exception.UserNotVerifiedException
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -50,8 +51,10 @@ class UserRestController(
                 authenticationRequest.username,
                 authenticationRequest.password,
             )
-        val user = authenticationManager.authenticate(authenticationToken)
-        val jwtToken = jwtGenerator.generateToken(user)
+        val authentication = authenticationManager.authenticate(authenticationToken)
+        val jwtToken = jwtGenerator.generateToken(authentication)
+        val user = userService.loadUserByUsername(authenticationRequest.username)
+        if (!user.isVerified) throw UserNotVerifiedException("User is not verified.")
 
         return ResponseEntity.ok(AuthResponse(jwtToken))
     }
