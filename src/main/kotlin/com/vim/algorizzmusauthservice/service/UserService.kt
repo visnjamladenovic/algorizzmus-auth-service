@@ -27,4 +27,8 @@ class UserService(
     override fun loadUserByUsername(username: String): UserDTO {
         return repository.getUserByUsername(username).get().toUser()
     }
+
+    fun findUserByEmail(email: String): Optional<UserEntity> {
+        return repository.findUserByEmail(email)
+    }
 }

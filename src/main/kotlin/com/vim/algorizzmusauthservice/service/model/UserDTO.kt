@@ -13,6 +13,8 @@ data class UserDTO(
     val userPassword: String,
     @JsonIgnore
     val userRole: UserRole,
+    val email: String,
+    val isVerified: Boolean = false,
 ) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return mutableListOf(SimpleGrantedAuthority("ROLE_$userRole"))

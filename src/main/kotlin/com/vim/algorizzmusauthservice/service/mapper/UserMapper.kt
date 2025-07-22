@@ -9,5 +9,7 @@ fun UserEntity.toUser(): UserDTO {
         userUsername = this.username,
         userPassword = this.password,
         userRole = UserRole.ALGO_ADMIN,
+        email = this.email,
+        isVerified = this.isVerified,
     )
 }
