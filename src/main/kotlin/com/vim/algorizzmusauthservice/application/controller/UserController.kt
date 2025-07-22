@@ -1,61 +1,125 @@
 package com.vim.algorizzmusauthservice.application.controller
 
+import com.vim.algorizzmusauthservice.application.annotation.StandardErrorResponses
 import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
 import com.vim.algorizzmusauthservice.application.response.AuthResponse
-import com.vim.algorizzmusauthservice.application.security.JwtGenerator
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
-import com.vim.algorizzmusauthservice.service.UserService
-import com.vim.algorizzmusauthservice.service.exception.UserNotVerifiedException
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 
-@RestController
-@RequestMapping("/users")
-class UserController(
-    private val userService: UserService,
-    private val authenticationManager: AuthenticationManager,
-    private val jwtGenerator: JwtGenerator,
-    private val passwordEncoder: PasswordEncoder,
-) {
-    @GetMapping("/{id}")
+@Tag(name = "User Controller", description = "Register new or login as existing user")
+interface UserController {
+    @Operation(
+        summary = "Login",
+        description = "Login as an existing user",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "User successfully logged in",
+                content = [
+                    Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema =
+                            Schema(
+                                implementation = AuthResponse::class,
+                                example = TOKEN_EXAMPLE,
+                            ),
+                    ),
+                ],
+            ),
+        ],
+    )
+    @StandardErrorResponses
+    fun loginUser(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "User Request Object",
+            required = true,
+            content = [
+                Content(
+                    schema = Schema(implementation = AuthenticationRequest::class),
+                ),
+            ],
+        )
+        authenticationRequest: AuthenticationRequest,
+    ): ResponseEntity<AuthResponse>
+
+    @Operation(
+        summary = "Register",
+        description = "Register new user",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "User successfully registered",
+                content = [
+                    Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema =
+                            Schema(
+                                implementation = UserEntity::class,
+                            ),
+                    ),
+                ],
+            ),
+        ],
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @StandardErrorResponses
+    fun registerUser(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "User Request Object",
+            required = true,
+            content = [
+                Content(
+                    schema = Schema(implementation = AuthenticationRequest::class),
+                ),
+            ],
+        )
+        @RequestBody user: UserEntity,
+    ): ResponseEntity<UserEntity>
+
+    @Operation(
+        summary = "Find by id",
+        description = "Find a user by ID",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "User successfully retrieved",
+                content = [
+                    Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        schema =
+                            Schema(
+                                implementation = UserEntity::class,
+                            ),
+                    ),
+                ],
+            ),
+        ],
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @StandardErrorResponses
     fun getUserById(
         @PathVariable id: Long,
-    ): ResponseEntity<UserEntity> {
-        return ResponseEntity.ok(
-            userService.getUserById(id).get(),
-        )
-    }
+    ): ResponseEntity<UserEntity>
 
-    @PostMapping("/register")
-    fun registerUser(
-        @RequestBody user: UserEntity,
-    ): ResponseEntity<UserEntity> {
-        user.password = passwordEncoder.encode(user.password)
-        return ResponseEntity.ok(userService.registerUser(user))
-    }
-
-    @PostMapping("/login")
-    fun loginUser(
-        @RequestBody authenticationRequest: AuthenticationRequest,
-    ): ResponseEntity<AuthResponse> {
-        val authenticationToken =
-            UsernamePasswordAuthenticationToken(
-                authenticationRequest.username,
-                authenticationRequest.password,
-            )
-        val authentication = authenticationManager.authenticate(authenticationToken)
-        val jwtToken = jwtGenerator.generateToken(authentication)
-        val user = userService.loadUserByUsername(authenticationRequest.username)
-        if (!user.isVerified) throw UserNotVerifiedException("User is not verified.")
-
-        return ResponseEntity.ok(AuthResponse(jwtToken))
+    companion object {
+        private const val TOKEN_EXAMPLE =
+            "{\"accessToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbGlqYSIsImlhdCI6MTc0NDYzODU3MywiZXhwIjoxNzQ0NjQyMTc" +
+                "zfQ.MS65GTeSFCUBteva3EfvkwxOY-2eoHmKPGU9ozXcUa0\"}"
     }
 }
