@@ -28,7 +28,7 @@ class UserService(
         return repository.getUserByUsername(username).get().toUser()
     }
 
-    fun findUserByEmail(email: String): UserEntity? {
+    fun findUserByEmail(email: String): Optional<UserEntity> {
         return repository.findUserByEmail(email)
     }
 }

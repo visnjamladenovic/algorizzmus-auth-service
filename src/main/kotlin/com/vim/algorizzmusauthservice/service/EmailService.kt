@@ -6,14 +6,36 @@ import org.springframework.stereotype.Service
 
 @Service
 class EmailService(private val mailSender: JavaMailSender) {
+    private fun sendMail(
+        to: String,
+        subject: String,
+        text: String,
+    ) {
+        val message = SimpleMailMessage()
+        message.setTo(to)
+        message.subject = subject
+        message.text = text
+        mailSender.send(message)
+    }
+
     fun sendVerificationEmail(
         to: String,
         token: String,
     ) {
-        val message = SimpleMailMessage()
-        message.setTo(to)
-        message.setSubject("Verify your email")
-        message.setText("Click to verify: http://localhost:8080/verify?token=$token")
-        mailSender.send(message)
+        val body = "Your verification code is $token"
+        sendMail(to, REGISTRATION_EMAIL_SUBJECT, body)
+    }
+
+    fun sendPasswordResetEmail(
+        to: String,
+        token: String,
+    ) {
+        val body = "Your password reset code is $token"
+        sendMail(to, PASSWORD_RESET_EMAIL_SUBJECT, body)
+    }
+
+    companion object {
+        private const val REGISTRATION_EMAIL_SUBJECT = "Verify your email"
+        private const val PASSWORD_RESET_EMAIL_SUBJECT = "Reset your password"
     }
 }

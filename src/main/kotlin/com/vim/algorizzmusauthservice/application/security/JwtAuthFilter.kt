@@ -22,7 +22,7 @@ class JwtAuthFilter(
     ) {
         val publicPaths = listOf("/users/login", "/users/register")
 
-        if (publicPaths.any { request.requestURI.contains(it) }) {
+        if (request.requestURI.contains(publicPaths[1])) {
             filterChain.doFilter(request, response)
             return
         }
@@ -42,7 +42,6 @@ class JwtAuthFilter(
                     ).apply {
                         details = WebAuthenticationDetailsSource().buildDetails(request)
                     }
-
                 SecurityContextHolder.getContext().authentication = authToken
             }
         }

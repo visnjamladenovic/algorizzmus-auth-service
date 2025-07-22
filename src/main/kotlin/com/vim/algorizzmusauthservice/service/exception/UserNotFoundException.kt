@@ -1,3 +1,3 @@
 package com.vim.algorizzmusauthservice.service.exception
 
-class UserNotFoundException(message: String) : RuntimeException(message)
+class UserNotFoundException(override val message: String) : RuntimeException()

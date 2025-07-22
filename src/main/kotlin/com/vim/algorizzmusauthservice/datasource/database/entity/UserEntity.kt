@@ -29,6 +29,6 @@ class UserEntity {
     @Column(name = "email", unique = true)
     var email: String = ""
 
-    @Column(name = "is_email_verified")
-    var isEmailVerified: Boolean = false
+    @Column(name = "is_verified")
+    var isVerified: Boolean = false
 }
