@@ -19,7 +19,7 @@ class EmailVerificationCodeService(
             )
         codeRepository.saveCode(codeEntity)
         emailClient.sendVerificationEmail(
-            EmailCodeRequest(user.email, codeEntity.code),
+            EmailCodeRequest(user.email, codeEntity.code, user.username),
         )
     }
 }
