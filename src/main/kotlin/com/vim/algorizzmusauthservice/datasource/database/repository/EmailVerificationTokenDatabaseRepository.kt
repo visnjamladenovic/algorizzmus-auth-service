@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class EmailVerificationTokenDatabaseRepository(private val jpaRepository: EmailVerificationTokenJPARepository) :
     EmailVerificationTokenRepository {
-    override fun saveToken(token: EmailVerificationTokenEntity): EmailVerificationTokenEntity {
-        return jpaRepository.save(token)
+    override fun saveCode(code: EmailVerificationTokenEntity): EmailVerificationTokenEntity {
+        return jpaRepository.save(code)
     }
 }

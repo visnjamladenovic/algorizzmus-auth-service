@@ -19,7 +19,7 @@ class EmailVerificationTokenEntity(
     @JoinColumn(name = "user_id", nullable = false)
     val user: UserEntity,
     @Column(nullable = false, unique = true)
-    var token: String = Random.nextInt(1000, 9999).toString(),
+    var code: String = Random.nextInt(1000, 9999).toString(),
     @Column(nullable = false)
     var expirationDate: LocalDateTime = LocalDateTime.now().plusHours(24),
 ) {

@@ -15,7 +15,7 @@ class AuthController(private val emailVerificationTokenService: EmailVerificatio
     fun sendVerification(
         @RequestBody request: EmailVerificationRequest,
     ): ResponseEntity<String> {
-        emailVerificationTokenService.generateAndSendToken(request.email)
+        emailVerificationTokenService.generateAndSendCode(request.email)
         return ResponseEntity.ok("Verification email sent successfully.")
     }
 }

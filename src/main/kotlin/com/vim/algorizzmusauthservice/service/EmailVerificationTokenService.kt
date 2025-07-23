@@ -13,17 +13,18 @@ class EmailVerificationTokenService(
     private val emailService: EmailService,
     private val userRepository: UserRepository,
 ) {
-    fun generateAndSendToken(email: String) {
+    fun generateAndSendCode(email: String) {
         val user = userRepository.findUserByEmail(email)
         if (user.isEmpty) throw UserNotFoundException("User with email $email not found")
-        val tokenEntity =
+        val codeEntity =
             EmailVerificationTokenEntity(
                 user = user.get(),
             )
-        tokenRepository.saveToken(tokenEntity)
+        tokenRepository.saveCode(codeEntity)
         emailService.sendVerificationEmail(
             email,
-            tokenEntity.token,
+            codeEntity.code,
+            username = user.get().username,
         )
     }
 }

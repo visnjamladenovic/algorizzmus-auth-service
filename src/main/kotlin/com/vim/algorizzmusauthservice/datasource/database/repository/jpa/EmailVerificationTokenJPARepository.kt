@@ -7,5 +7,5 @@ import java.util.Optional
 
 @Repository
 interface EmailVerificationTokenJPARepository : JpaRepository<EmailVerificationTokenEntity, Long> {
-    fun findByToken(token: String): Optional<EmailVerificationTokenEntity>
+    fun findByCode(code: String): Optional<EmailVerificationTokenEntity>
 }

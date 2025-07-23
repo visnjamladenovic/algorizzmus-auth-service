@@ -38,6 +38,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
