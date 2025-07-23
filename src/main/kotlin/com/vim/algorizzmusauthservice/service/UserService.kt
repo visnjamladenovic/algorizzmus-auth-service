@@ -12,6 +12,7 @@ import java.util.Optional
 @Service
 class UserService(
     private val repository: UserRepository,
+    private val emailVerificationCodeService: EmailVerificationCodeService,
 ) : UserDetailsService {
     fun getUserById(id: Long): Optional<UserEntity> {
         return repository.getUserById(id)
@@ -21,7 +22,10 @@ class UserService(
         if (repository.existsByUsername(user.username)) {
             throw UserAlreadyExistsException("User ${user.username} already exists")
         }
-        return repository.saveUser(user)
+
+        val saveUser = repository.saveUser(user)
+        emailVerificationCodeService.generateAndSendToken(saveUser)
+        return saveUser
     }
 
     override fun loadUserByUsername(username: String): UserDTO {
