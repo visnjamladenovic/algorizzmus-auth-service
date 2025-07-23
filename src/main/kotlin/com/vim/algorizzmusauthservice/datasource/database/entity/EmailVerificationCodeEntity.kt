@@ -13,13 +13,13 @@ import java.time.LocalDateTime
 import kotlin.random.Random
 
 @Entity
-@Table(name = "email_verification_tokens")
-class EmailVerificationTokenEntity(
+@Table(name = "verification_codes")
+class EmailVerificationCodeEntity(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     val user: UserEntity,
     @Column(nullable = false, unique = true)
-    var token: String = Random.nextInt(1000, 9999).toString(),
+    var code: String = Random.nextInt(100000, 999999).toString(),
     @Column(nullable = false)
     var expirationDate: LocalDateTime = LocalDateTime.now().plusHours(24),
 ) {
