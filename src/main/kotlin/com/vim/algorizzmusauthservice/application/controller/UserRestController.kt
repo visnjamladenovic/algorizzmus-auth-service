@@ -1,6 +1,8 @@
 package com.vim.algorizzmusauthservice.application.controller
 
 import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
+import com.vim.algorizzmusauthservice.application.request.ForgotPasswordConfirmationRequest
+import com.vim.algorizzmusauthservice.application.request.ForgotPasswordEmailRequest
 import com.vim.algorizzmusauthservice.application.response.AuthResponse
 import com.vim.algorizzmusauthservice.application.security.JwtGenerator
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
@@ -54,8 +56,23 @@ class UserRestController(
         val authentication = authenticationManager.authenticate(authenticationToken)
         val jwtToken = jwtGenerator.generateToken(authentication)
         val user = userService.loadUserByUsername(authenticationRequest.username)
-        if (!user.isVerified) throw UserNotVerifiedException("User is not verified.")
+        if (!user.isVerified) throw UserNotVerifiedException("User ${user.username} not verified")
 
         return ResponseEntity.ok(AuthResponse(jwtToken))
+    }
+
+    @PostMapping("/forgot-password-email")
+    override fun forgotPasswordEmail(
+        @RequestBody forgotPasswordEmailRequest: ForgotPasswordEmailRequest,
+    ): ResponseEntity<Void> {
+        userService.forgotPasswordEmail(forgotPasswordEmailRequest.email)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/forgot-password-confirm")
+    override fun forgotPasswordConfirmation(forgotPasswordConfirmationRequest: ForgotPasswordConfirmationRequest): ResponseEntity<Void> {
+        val password = passwordEncoder.encode(forgotPasswordConfirmationRequest.newPassword)
+        userService.resetUserPasswordByCode(forgotPasswordConfirmationRequest.code, password)
+        return ResponseEntity.noContent().build()
     }
 }

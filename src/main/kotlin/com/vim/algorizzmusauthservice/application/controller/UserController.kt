@@ -2,6 +2,8 @@ package com.vim.algorizzmusauthservice.application.controller
 
 import com.vim.algorizzmusauthservice.application.annotation.StandardErrorResponses
 import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
+import com.vim.algorizzmusauthservice.application.request.ForgotPasswordConfirmationRequest
+import com.vim.algorizzmusauthservice.application.request.ForgotPasswordEmailRequest
 import com.vim.algorizzmusauthservice.application.response.AuthResponse
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
 import io.swagger.v3.oas.annotations.Operation
@@ -116,6 +118,14 @@ interface UserController {
     fun getUserById(
         @PathVariable id: Long,
     ): ResponseEntity<UserEntity>
+
+    fun forgotPasswordEmail(
+        @RequestBody forgotPasswordEmailRequest: ForgotPasswordEmailRequest,
+    ): ResponseEntity<Void>
+
+    fun forgotPasswordConfirmation(
+        @RequestBody forgotPasswordConfirmationRequest: ForgotPasswordConfirmationRequest,
+    ): ResponseEntity<Void>
 
     companion object {
         private const val TOKEN_EXAMPLE =

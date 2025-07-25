@@ -2,7 +2,9 @@ package com.vim.algorizzmusauthservice.service
 
 import com.vim.algorizzmusauthservice.datasource.UserRepository
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
+import com.vim.algorizzmusauthservice.service.exception.CodeNotFoundException
 import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsException
+import com.vim.algorizzmusauthservice.service.exception.UserNotFoundException
 import com.vim.algorizzmusauthservice.service.mapper.toUser
 import com.vim.algorizzmusauthservice.service.model.UserDTO
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -24,7 +26,7 @@ class UserService(
         }
 
         val saveUser = repository.saveUser(user)
-        emailVerificationCodeService.generateAndSendToken(saveUser)
+        emailVerificationCodeService.sendVerificationCode(saveUser)
         return saveUser
     }
 
@@ -34,5 +36,33 @@ class UserService(
 
     fun findUserByEmail(email: String): Optional<UserEntity> {
         return repository.findUserByEmail(email)
+    }
+
+    fun forgotPasswordEmail(email: String) {
+        val user = repository.findUserByEmail(email)
+        if (user.isEmpty) {
+            throw UserNotFoundException("User with email $email not found")
+        }
+        emailVerificationCodeService.sendForgotPasswordCode(user.get())
+    }
+
+    fun resetUserPasswordByCode(
+        code: String,
+        newPassword: String,
+    ) {
+        val dbCode = emailVerificationCodeService.findByCode(code)
+        if (dbCode.isEmpty) {
+            throw CodeNotFoundException("Code $code not found")
+        }
+        val dbUser = dbCode.get().user
+        resetUserPassword(dbUser, newPassword)
+    }
+
+    private fun resetUserPassword(
+        user: UserEntity,
+        newPassword: String,
+    ) {
+        user.password = newPassword
+        repository.saveUser(user)
     }
 }
