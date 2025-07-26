@@ -4,7 +4,10 @@ import com.vim.algorizzmusauthservice.application.annotation.StandardErrorRespon
 import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
 import com.vim.algorizzmusauthservice.application.request.ForgotPasswordConfirmationRequest
 import com.vim.algorizzmusauthservice.application.request.ForgotPasswordEmailRequest
+import com.vim.algorizzmusauthservice.application.request.RegistrationRequest
+import com.vim.algorizzmusauthservice.application.request.VerificationRequest
 import com.vim.algorizzmusauthservice.application.response.AuthResponse
+import com.vim.algorizzmusauthservice.application.response.UserResponse
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -15,7 +18,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 
 @Tag(name = "User Controller", description = "Register new or login as existing user")
@@ -85,39 +87,16 @@ interface UserController {
             required = true,
             content = [
                 Content(
-                    schema = Schema(implementation = AuthenticationRequest::class),
+                    schema = Schema(implementation = RegistrationRequest::class),
                 ),
             ],
         )
-        @RequestBody user: UserEntity,
-    ): ResponseEntity<UserEntity>
+        @RequestBody registrationRequest: RegistrationRequest,
+    ): ResponseEntity<UserResponse>
 
-    @Operation(
-        summary = "Find by id",
-        description = "Find a user by ID",
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "User successfully retrieved",
-                content = [
-                    Content(
-                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                        schema =
-                            Schema(
-                                implementation = UserEntity::class,
-                            ),
-                    ),
-                ],
-            ),
-        ],
-    )
-    @SecurityRequirement(name = "bearerAuth")
-    @StandardErrorResponses
-    fun getUserById(
-        @PathVariable id: Long,
-    ): ResponseEntity<UserEntity>
+    fun verifyUser(
+        @RequestBody verificationRequest: VerificationRequest,
+    ): ResponseEntity<Void>
 
     fun forgotPasswordEmail(
         @RequestBody forgotPasswordEmailRequest: ForgotPasswordEmailRequest,

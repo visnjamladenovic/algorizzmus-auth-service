@@ -1,3 +1,10 @@
 package com.vim.algorizzmusauthservice.application.request
 
-data class AuthenticationRequest(val username: String, val password: String)
+import jakarta.validation.constraints.NotBlank
+
+data class AuthenticationRequest(
+    @field:NotBlank(message = "Username cannot be blank")
+    val username: String = "",
+    @field:NotBlank(message = "Password cannot be blank")
+    val password: String = "",
+)

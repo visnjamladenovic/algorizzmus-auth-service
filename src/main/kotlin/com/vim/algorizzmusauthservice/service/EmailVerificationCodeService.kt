@@ -7,6 +7,8 @@ import com.vim.algorizzmusauthservice.datasource.emailservice.client.EmailClient
 import com.vim.algorizzmusauthservice.datasource.emailservice.request.EmailCodeRequest
 import com.vim.algorizzmusauthservice.service.enums.VerificationCodeType
 import com.vim.algorizzmusauthservice.service.exception.CodeAlreadyExistsException
+import com.vim.algorizzmusauthservice.service.exception.CodeExpiredException
+import com.vim.algorizzmusauthservice.service.exception.CodeNotFoundException
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.Optional
@@ -36,6 +38,18 @@ class EmailVerificationCodeService(
         emailClient.sendForgotPasswordEmail(
             EmailCodeRequest(user.email, code, user.username),
         )
+    }
+
+    fun fetchAndVerifyCode(code: String): EmailVerificationCodeEntity {
+        val userCode = codeRepository.findByCode(code)
+        if (userCode.isEmpty) {
+            throw CodeNotFoundException("Code $code not found")
+        }
+
+        if (userCode.get().expirationDate.isBefore(LocalDateTime.now())) {
+            throw CodeExpiredException("Code $code expired")
+        }
+        return userCode.get()
     }
 
     private fun generateCode(

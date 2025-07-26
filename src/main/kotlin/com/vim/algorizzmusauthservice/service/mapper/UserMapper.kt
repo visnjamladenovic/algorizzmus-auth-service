@@ -4,12 +4,21 @@ import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
 import com.vim.algorizzmusauthservice.service.enums.UserRole
 import com.vim.algorizzmusauthservice.service.model.UserDTO
 
-fun UserEntity.toUser(): UserDTO {
+fun UserEntity.toUserDTO(): UserDTO {
     return UserDTO(
-        userUsername = this.username,
-        userPassword = this.password,
-        userRole = UserRole.ALGO_ADMIN,
+        username = this.username,
+        password = this.password,
+        role = UserRole.ALGO_ADMIN,
         email = this.email,
         isVerified = this.isVerified,
     )
+}
+
+fun UserDTO.toUserEntity(): UserEntity {
+    val userEntity = UserEntity()
+    userEntity.username = this.username
+    userEntity.password = this.password
+    userEntity.email = this.email
+    userEntity.isVerified = this.isVerified
+    return userEntity
 }
