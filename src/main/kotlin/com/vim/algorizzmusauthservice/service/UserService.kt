@@ -6,38 +6,34 @@ import com.vim.algorizzmusauthservice.service.exception.CodeExpiredException
 import com.vim.algorizzmusauthservice.service.exception.CodeNotFoundException
 import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsException
 import com.vim.algorizzmusauthservice.service.exception.UserNotFoundException
-import com.vim.algorizzmusauthservice.service.mapper.toUser
+import com.vim.algorizzmusauthservice.service.mapper.toUserDTO
+import com.vim.algorizzmusauthservice.service.mapper.toUserEntity
 import com.vim.algorizzmusauthservice.service.model.UserDTO
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.Optional
 
 @Service
 class UserService(
     private val repository: UserRepository,
     private val emailVerificationCodeService: EmailVerificationCodeService,
 ) : UserDetailsService {
-    fun getUserById(id: Long): Optional<UserEntity> {
-        return repository.getUserById(id)
-    }
-
-    fun registerUser(user: UserEntity): UserEntity {
+    fun registerUser(user: UserDTO): UserDTO {
         if (repository.existsByUsername(user.username)) {
             throw UserAlreadyExistsException("User ${user.username} already exists")
         }
 
-        val saveUser = repository.saveUser(user)
-        emailVerificationCodeService.sendVerificationCode(saveUser)
-        return saveUser
+        if (repository.existsByEmail(user.email)) {
+            throw UserAlreadyExistsException("User ${user.email} already exists")
+        }
+
+        val savedUser = repository.saveUser(user.toUserEntity())
+        emailVerificationCodeService.sendVerificationCode(savedUser)
+        return savedUser.toUserDTO()
     }
 
     override fun loadUserByUsername(username: String): UserDTO {
-        return repository.getUserByUsername(username).get().toUser()
-    }
-
-    fun findUserByEmail(email: String): Optional<UserEntity> {
-        return repository.findUserByEmail(email)
+        return repository.getUserByUsername(username).get().toUserDTO()
     }
 
     fun forgotPasswordEmail(email: String) {

@@ -10,16 +10,16 @@ import java.util.Optional
 class UserDatabaseRepository(
     private val userJPARepository: UserJPARepository,
 ) : UserRepository {
-    override fun getUserById(id: Long): Optional<UserEntity> {
-        return userJPARepository.findById(id)
-    }
-
     override fun saveUser(user: UserEntity): UserEntity {
         return userJPARepository.save(user)
     }
 
     override fun existsByUsername(username: String): Boolean {
         return userJPARepository.existsByUsername(username)
+    }
+
+    override fun existsByEmail(email: String): Boolean {
+        return userJPARepository.existsByEmail(email)
     }
 
     override fun getUserByUsername(username: String): Optional<UserEntity> {
