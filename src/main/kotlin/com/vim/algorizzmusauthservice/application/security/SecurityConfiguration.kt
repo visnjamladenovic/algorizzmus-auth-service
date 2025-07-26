@@ -56,6 +56,7 @@ class SecurityConfiguration(
                         "/users/forgot-password-email",
                         "/users/forgot-password-confirmation",
                         "/users/register",
+                        "/users/verify",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/swagger-ui/index.html",

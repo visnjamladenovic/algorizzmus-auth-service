@@ -14,10 +14,10 @@ fun UserDTO.toUserResponse(): UserResponse {
     )
 }
 
-fun RegistrationRequest.toUserDTO(): UserDTO {
+fun RegistrationRequest.toUserDTO(encodedPassword: String): UserDTO {
     return UserDTO(
         username = this.username,
-        password = this.password,
+        password = encodedPassword,
         email = this.email,
         isVerified = false,
         role = UserRole.ALGO_USER,

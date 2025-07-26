@@ -5,6 +5,7 @@ import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
 import com.vim.algorizzmusauthservice.application.request.ForgotPasswordConfirmationRequest
 import com.vim.algorizzmusauthservice.application.request.ForgotPasswordEmailRequest
 import com.vim.algorizzmusauthservice.application.request.RegistrationRequest
+import com.vim.algorizzmusauthservice.application.request.VerificationRequest
 import com.vim.algorizzmusauthservice.application.response.AuthResponse
 import com.vim.algorizzmusauthservice.application.response.UserResponse
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
@@ -92,6 +93,10 @@ interface UserController {
         )
         @RequestBody registrationRequest: RegistrationRequest,
     ): ResponseEntity<UserResponse>
+
+    fun verifyUser(
+        @RequestBody verificationRequest: VerificationRequest,
+    ): ResponseEntity<Void>
 
     fun forgotPasswordEmail(
         @RequestBody forgotPasswordEmailRequest: ForgotPasswordEmailRequest,

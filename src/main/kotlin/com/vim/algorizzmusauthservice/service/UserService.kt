@@ -32,6 +32,22 @@ class UserService(
         return savedUser.toUserDTO()
     }
 
+    fun verifyUserByCode(code: String) {
+        val userCode = emailVerificationCodeService.findByCode(code)
+        if (userCode.isEmpty) {
+            throw CodeNotFoundException("Code $code not found")
+        }
+
+        if (userCode.get().expirationDate.isBefore(LocalDateTime.now())) {
+            throw CodeExpiredException("Code $code expired")
+        }
+
+        val user = userCode.get().user
+        verifyUser(user)
+
+        emailVerificationCodeService.deleteById(userCode.get().id)
+    }
+
     override fun loadUserByUsername(username: String): UserDTO {
         return repository.getUserByUsername(username).get().toUserDTO()
     }
@@ -70,6 +86,11 @@ class UserService(
         newPassword: String,
     ) {
         user.password = newPassword
+        repository.saveUser(user)
+    }
+
+    private fun verifyUser(user: UserEntity) {
+        user.isVerified = true
         repository.saveUser(user)
     }
 }

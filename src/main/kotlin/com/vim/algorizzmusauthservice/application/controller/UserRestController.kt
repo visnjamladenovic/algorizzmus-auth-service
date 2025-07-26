@@ -6,6 +6,7 @@ import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
 import com.vim.algorizzmusauthservice.application.request.ForgotPasswordConfirmationRequest
 import com.vim.algorizzmusauthservice.application.request.ForgotPasswordEmailRequest
 import com.vim.algorizzmusauthservice.application.request.RegistrationRequest
+import com.vim.algorizzmusauthservice.application.request.VerificationRequest
 import com.vim.algorizzmusauthservice.application.response.AuthResponse
 import com.vim.algorizzmusauthservice.application.response.UserResponse
 import com.vim.algorizzmusauthservice.application.security.JwtGenerator
@@ -33,8 +34,17 @@ class UserRestController(
     override fun registerUser(
         @RequestBody @Valid registrationRequest: RegistrationRequest,
     ): ResponseEntity<UserResponse> {
-        val createdUser = userService.registerUser(registrationRequest.toUserDTO())
+        val password = passwordEncoder.encode(registrationRequest.password)
+        val createdUser = userService.registerUser(registrationRequest.toUserDTO(password))
         return ResponseEntity.ok(createdUser.toUserResponse())
+    }
+
+    @PostMapping("/verify")
+    override fun verifyUser(
+        @RequestBody @Valid verificationRequest: VerificationRequest,
+    ): ResponseEntity<Void> {
+        userService.verifyUserByCode(verificationRequest.code)
+        return ResponseEntity.ok().build()
     }
 
     // izmestiti logiku za proveru verifikacije u servis
