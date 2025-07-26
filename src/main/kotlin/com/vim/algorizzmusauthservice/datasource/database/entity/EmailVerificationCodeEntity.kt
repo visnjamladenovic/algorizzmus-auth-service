@@ -10,7 +10,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 import kotlin.random.Random
@@ -21,13 +21,13 @@ class EmailVerificationCodeEntity(
     @Enumerated(EnumType.STRING)
     @Column(name = "verification_code_type", nullable = false)
     var codeType: VerificationCodeType,
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     val user: UserEntity,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Long = 0
 
     @Column(name = "code", nullable = false, unique = true)
     var code: String = Random.nextInt(100000, 999999).toString()
