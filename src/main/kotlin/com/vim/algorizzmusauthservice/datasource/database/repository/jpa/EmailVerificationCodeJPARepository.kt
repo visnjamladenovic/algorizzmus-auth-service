@@ -9,5 +9,9 @@ import java.util.Optional
 @Repository
 interface EmailVerificationCodeJPARepository : JpaRepository<EmailVerificationCodeEntity, Long> {
     fun findByCode(code: String): Optional<EmailVerificationCodeEntity>
-    fun findByUserIdAndCodeType(userId: Long, codeType: VerificationCodeType): Optional<EmailVerificationCodeEntity>
+
+    fun findByUserIdAndCodeType(
+        userId: Long,
+        codeType: VerificationCodeType,
+    ): Optional<EmailVerificationCodeEntity>
 }

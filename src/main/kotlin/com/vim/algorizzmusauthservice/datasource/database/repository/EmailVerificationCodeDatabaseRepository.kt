@@ -24,7 +24,7 @@ class EmailVerificationCodeDatabaseRepository(private val jpaRepository: EmailVe
 
     override fun findByUserIdAndCodeType(
         userId: Long,
-        codeType: VerificationCodeType
+        codeType: VerificationCodeType,
     ): Optional<EmailVerificationCodeEntity> {
         return jpaRepository.findByUserIdAndCodeType(userId, codeType)
     }

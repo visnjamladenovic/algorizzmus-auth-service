@@ -53,5 +53,4 @@ class ApiExceptionHandler {
             ApiErrorResponse(HttpStatus.CONFLICT, e.message),
             HttpStatus.CONFLICT,
         )
-
 }

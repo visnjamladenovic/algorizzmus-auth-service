@@ -46,8 +46,7 @@ class EmailVerificationCodeService(
         if (existingCode.isPresent) {
             if (existingCode.get().expirationDate.isBefore(LocalDateTime.now())) {
                 codeRepository.deleteById(existingCode.get().id)
-            }
-            else {
+            } else {
                 throw CodeAlreadyExistsException("Code ${existingCode.get().code} already exists")
             }
         }

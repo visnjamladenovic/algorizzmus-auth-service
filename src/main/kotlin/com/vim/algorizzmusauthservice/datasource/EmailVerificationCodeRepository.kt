@@ -11,5 +11,8 @@ interface EmailVerificationCodeRepository {
 
     fun deleteById(id: Long)
 
-    fun findByUserIdAndCodeType(userId: Long, codeType: VerificationCodeType): Optional<EmailVerificationCodeEntity>
+    fun findByUserIdAndCodeType(
+        userId: Long,
+        codeType: VerificationCodeType,
+    ): Optional<EmailVerificationCodeEntity>
 }
