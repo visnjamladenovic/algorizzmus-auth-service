@@ -69,7 +69,7 @@ class UserRestController(
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("/forgot-password-confirm")
+    @PostMapping("/forgot-password-confirmation")
     override fun forgotPasswordConfirmation(forgotPasswordConfirmationRequest: ForgotPasswordConfirmationRequest): ResponseEntity<Void> {
         val password = passwordEncoder.encode(forgotPasswordConfirmationRequest.newPassword)
         userService.resetUserPasswordByCode(forgotPasswordConfirmationRequest.code, password)

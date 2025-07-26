@@ -6,7 +6,9 @@ import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
 import com.vim.algorizzmusauthservice.datasource.emailservice.client.EmailClient
 import com.vim.algorizzmusauthservice.datasource.emailservice.request.EmailCodeRequest
 import com.vim.algorizzmusauthservice.service.enums.VerificationCodeType
+import com.vim.algorizzmusauthservice.service.exception.CodeAlreadyExistsException
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.Optional
 
 @Service
@@ -16,6 +18,10 @@ class EmailVerificationCodeService(
 ) {
     fun findByCode(code: String): Optional<EmailVerificationCodeEntity> {
         return codeRepository.findByCode(code)
+    }
+
+    fun deleteById(id: Long) {
+        codeRepository.deleteById(id)
     }
 
     fun sendVerificationCode(user: UserEntity) {
@@ -36,6 +42,16 @@ class EmailVerificationCodeService(
         user: UserEntity,
         verificationCodeType: VerificationCodeType,
     ): EmailVerificationCodeEntity {
+        val existingCode = codeRepository.findByUserIdAndCodeType(user.id, verificationCodeType)
+        if (existingCode.isPresent) {
+            if (existingCode.get().expirationDate.isBefore(LocalDateTime.now())) {
+                codeRepository.deleteById(existingCode.get().id)
+            }
+            else {
+                throw CodeAlreadyExistsException("Code ${existingCode.get().code} already exists")
+            }
+        }
+
         val codeEntity =
             EmailVerificationCodeEntity(
                 user = user,

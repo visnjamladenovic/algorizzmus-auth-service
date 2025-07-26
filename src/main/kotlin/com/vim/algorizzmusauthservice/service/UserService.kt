@@ -2,6 +2,7 @@ package com.vim.algorizzmusauthservice.service
 
 import com.vim.algorizzmusauthservice.datasource.UserRepository
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
+import com.vim.algorizzmusauthservice.service.exception.CodeExpiredException
 import com.vim.algorizzmusauthservice.service.exception.CodeNotFoundException
 import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsException
 import com.vim.algorizzmusauthservice.service.exception.UserNotFoundException
@@ -9,6 +10,7 @@ import com.vim.algorizzmusauthservice.service.mapper.toUser
 import com.vim.algorizzmusauthservice.service.model.UserDTO
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.Optional
 
 @Service
@@ -46,16 +48,25 @@ class UserService(
         emailVerificationCodeService.sendForgotPasswordCode(user.get())
     }
 
+    // da se doda limit na broj reset linkova
+
     fun resetUserPasswordByCode(
         code: String,
         newPassword: String,
     ) {
-        val dbCode = emailVerificationCodeService.findByCode(code)
-        if (dbCode.isEmpty) {
+        val userCode = emailVerificationCodeService.findByCode(code)
+        if (userCode.isEmpty) {
             throw CodeNotFoundException("Code $code not found")
         }
-        val dbUser = dbCode.get().user
-        resetUserPassword(dbUser, newPassword)
+
+        if (userCode.get().expirationDate.isBefore(LocalDateTime.now())) {
+            throw CodeExpiredException("Code $code expired")
+        }
+
+        val user = userCode.get().user
+        resetUserPassword(user, newPassword)
+
+        emailVerificationCodeService.deleteById(userCode.get().id)
     }
 
     private fun resetUserPassword(

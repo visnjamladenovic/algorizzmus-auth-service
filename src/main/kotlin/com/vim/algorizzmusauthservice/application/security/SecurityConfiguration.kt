@@ -53,6 +53,8 @@ class SecurityConfiguration(
                 auth
                     .requestMatchers(
                         "/users/login",
+                        "/users/forgot-password-email",
+                        "/users/forgot-password-confirmation",
                         "/users/register",
                         "/swagger-ui/**",
                         "/swagger-ui.html",

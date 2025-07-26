@@ -1,7 +1,11 @@
 package com.vim.algorizzmusauthservice.application.controller
 
 import com.vim.algorizzmusauthservice.application.response.ApiErrorResponse
+import com.vim.algorizzmusauthservice.service.exception.CodeAlreadyExistsException
+import com.vim.algorizzmusauthservice.service.exception.CodeExpiredException
+import com.vim.algorizzmusauthservice.service.exception.CodeNotFoundException
 import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsException
+import com.vim.algorizzmusauthservice.service.exception.UserNotFoundException
 import com.vim.algorizzmusauthservice.service.exception.UserNotVerifiedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,4 +25,33 @@ class ApiExceptionHandler {
             ApiErrorResponse(HttpStatus.FORBIDDEN, e.message),
             HttpStatus.FORBIDDEN,
         )
+
+    @ExceptionHandler(UserNotFoundException::class)
+    fun handleUserNotFoundException(e: UserNotFoundException): ResponseEntity<ApiErrorResponse> =
+        ResponseEntity(
+            ApiErrorResponse(HttpStatus.NOT_FOUND, e.message),
+            HttpStatus.NOT_FOUND,
+        )
+
+    @ExceptionHandler(CodeNotFoundException::class)
+    fun handleCodeNotFoundException(e: CodeNotFoundException): ResponseEntity<ApiErrorResponse> =
+        ResponseEntity(
+            ApiErrorResponse(HttpStatus.NOT_FOUND, e.message),
+            HttpStatus.NOT_FOUND,
+        )
+
+    @ExceptionHandler(CodeExpiredException::class)
+    fun handleCodeExpiredException(e: CodeExpiredException): ResponseEntity<ApiErrorResponse> =
+        ResponseEntity(
+            ApiErrorResponse(HttpStatus.FORBIDDEN, e.message),
+            HttpStatus.FORBIDDEN,
+        )
+
+    @ExceptionHandler(CodeAlreadyExistsException::class)
+    fun handleCodeAlreadyExistsException(e: CodeAlreadyExistsException): ResponseEntity<ApiErrorResponse> =
+        ResponseEntity(
+            ApiErrorResponse(HttpStatus.CONFLICT, e.message),
+            HttpStatus.CONFLICT,
+        )
+
 }
