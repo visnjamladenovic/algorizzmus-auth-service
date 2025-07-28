@@ -11,17 +11,12 @@ import com.vim.algorizzmusauthservice.service.exception.CodeExpiredException
 import com.vim.algorizzmusauthservice.service.exception.CodeNotFoundException
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.Optional
 
 @Service
 class EmailVerificationCodeService(
     private val codeRepository: EmailVerificationCodeRepository,
     private val emailClient: EmailClient,
 ) {
-    fun findByCode(code: String): Optional<EmailVerificationCodeEntity> {
-        return codeRepository.findByCode(code)
-    }
-
     fun deleteById(id: Long) {
         codeRepository.deleteById(id)
     }

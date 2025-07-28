@@ -1,6 +1,7 @@
 package com.vim.algorizzmusauthservice.application.controller
 
 import com.vim.algorizzmusauthservice.application.response.ApiErrorResponse
+import com.vim.algorizzmusauthservice.datasource.exception.DatasourceException
 import com.vim.algorizzmusauthservice.service.exception.CodeAlreadyExistsException
 import com.vim.algorizzmusauthservice.service.exception.CodeExpiredException
 import com.vim.algorizzmusauthservice.service.exception.CodeNotFoundException
@@ -53,6 +54,13 @@ class ApiExceptionHandler {
         ResponseEntity(
             ApiErrorResponse(HttpStatus.CONFLICT, e.message),
             HttpStatus.CONFLICT,
+        )
+
+    @ExceptionHandler(DatasourceException::class)
+    fun handleDatasourceException(e: DatasourceException): ResponseEntity<ApiErrorResponse> =
+        ResponseEntity(
+            ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.message),
+            HttpStatus.INTERNAL_SERVER_ERROR,
         )
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
