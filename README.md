@@ -77,49 +77,6 @@ The service will be available at `http://localhost:8080`
 
 The service uses Spring Boot's auto-configuration for PostgreSQL connections. Configure your database connection in `application.properties` or `application.yml`, with the password provided via the `DATASOURCE_PASSWORD` environment variable.
 
-## 🌐 API Endpoints
-
-### 🔑 Authentication
-
-#### POST `/users/register`
-Register a new user account.
-
-**Request Body:**
-```json
-{
-  "username": "user",
-  "password": "securePassword123"
-}
-```
-
-#### POST `/users/login`
-Authenticate user and receive JWT token.
-
-**Request Body:**
-```json
-{
-  "username": "user",
-  "password": "securePassword123"
-}
-```
-
-#### POST `/users/refresh`
-Refresh JWT token.
-
-**Headers:**
-```
-Authorization: Bearer <refresh_token>
-```
-
-#### POST `/api/auth/logout`
-Logout user and invalidate session.
-
-#### POST `/api/auth/forgot-password`
-Request password reset email.
-
-#### POST `/api/auth/reset-password`
-Reset password with token.
-
 ## 🔒 Authentication Flow
 
 1. User registers with email and password
