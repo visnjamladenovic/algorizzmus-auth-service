@@ -5,6 +5,7 @@ import com.vim.algorizzmusauthservice.datasource.exception.DatasourceException
 import com.vim.algorizzmusauthservice.service.exception.CodeAlreadyExistsException
 import com.vim.algorizzmusauthservice.service.exception.CodeExpiredException
 import com.vim.algorizzmusauthservice.service.exception.CodeNotFoundException
+import com.vim.algorizzmusauthservice.service.exception.TokenNotFoundException
 import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsException
 import com.vim.algorizzmusauthservice.service.exception.UserNotFoundException
 import com.vim.algorizzmusauthservice.service.exception.UserNotVerifiedException
@@ -68,4 +69,11 @@ class ApiExceptionHandler {
         val errors = ex.bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "Invalid") }
         return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(TokenNotFoundException::class)
+    fun handleTokenNotFoundException(e: TokenNotFoundException): ResponseEntity<ApiErrorResponse> =
+        ResponseEntity(
+            ApiErrorResponse(HttpStatus.NOT_FOUND, e.message),
+            HttpStatus.NOT_FOUND,
+        )
 }

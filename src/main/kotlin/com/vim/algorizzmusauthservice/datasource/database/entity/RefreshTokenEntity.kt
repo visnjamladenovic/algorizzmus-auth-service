@@ -11,16 +11,15 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "refresh_tokens")
-class RefreshTokenEntity {
+class RefreshTokenEntity(
+    @Column(name = "token", nullable = false, unique = true)
+    open var token: String = "",
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    open var user: UserEntity? = null,
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     open var id: Long = 0
-
-    @Column(name = "token", nullable = false, unique = true)
-    open var token: String = ""
-
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    open var user: UserEntity? = null
 }
