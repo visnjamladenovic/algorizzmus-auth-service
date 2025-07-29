@@ -1,5 +1,6 @@
 package com.vim.algorizzmusauthservice.application.controller
 
+import com.vim.algorizzmusauthservice.application.enums.TokenType
 import com.vim.algorizzmusauthservice.application.mapper.toUserDTO
 import com.vim.algorizzmusauthservice.application.mapper.toUserResponse
 import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
@@ -47,7 +48,6 @@ class UserRestController(
         return ResponseEntity.ok().build()
     }
 
-    // izmestiti logiku za proveru verifikacije u servis
     @PostMapping("/login")
     override fun loginUser(
         @RequestBody @Valid authenticationRequest: AuthenticationRequest,
@@ -58,11 +58,12 @@ class UserRestController(
                 authenticationRequest.password,
             )
         val authentication = authenticationManager.authenticate(authenticationToken)
-        val jwtToken = jwtGenerator.generateToken(authentication)
+        val accessToken = jwtGenerator.generateToken(authentication, TokenType.ACCESS)
+        val refreshToken = jwtGenerator.generateToken(authentication, TokenType.REFRESH)
         val user = userService.loadUserByUsername(authenticationRequest.username)
         if (!user.isVerified) throw UserNotVerifiedException("User ${user.username} not verified")
 
-        return ResponseEntity.ok(AuthResponse(jwtToken))
+        return ResponseEntity.ok(AuthResponse(accessToken, refreshToken))
     }
 
     @PostMapping("/forgot-password-email")

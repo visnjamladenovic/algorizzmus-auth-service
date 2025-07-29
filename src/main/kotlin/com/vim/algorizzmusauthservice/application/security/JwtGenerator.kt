@@ -1,5 +1,6 @@
 package com.vim.algorizzmusauthservice.application.security
 
+import com.vim.algorizzmusauthservice.application.enums.TokenType
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
@@ -15,13 +16,16 @@ class JwtGenerator {
         Keys.hmacShaKeyFor(jwtSecret.toByteArray(Charsets.UTF_8))
     }
 
-    fun generateToken(authentication: Authentication): String {
+    fun generateToken(
+        authentication: Authentication,
+        tokenType: TokenType,
+    ): String {
         val authorities = authentication.authorities.map { it.authority }
         return Jwts.builder()
             .setSubject(authentication.name)
             .claim(AUTHORITIES, authorities)
             .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + EXPIRATION))
+            .setExpiration(calculateExpiration(tokenType))
             .signWith(key)
             .compact()
     }
@@ -44,8 +48,16 @@ class JwtGenerator {
         }
     }
 
+    private fun calculateExpiration(tokenType: TokenType): Date {
+        return when (tokenType) {
+            TokenType.ACCESS -> Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION)
+            TokenType.REFRESH -> Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION)
+        }
+    }
+
     companion object {
         private const val AUTHORITIES = "authorities"
-        private const val EXPIRATION = 3600000
+        private const val ACCESS_TOKEN_EXPIRATION = 3600000
+        private const val REFRESH_TOKEN_EXPIRATION = 3600000 * 24 * 7
     }
 }

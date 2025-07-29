@@ -80,7 +80,7 @@ dependencyManagement {
 }
 
 flyway {
-    url = "jdbc:postgresql://localhost:5432/algorizzmus-auth-service-db"
+    url = "jdbc:postgresql://localhost:5433/algorizzmus-auth-service-db"
     user = "algorizzmus"
     password = env.DATASOURCE_PASSWORD.value
 }
