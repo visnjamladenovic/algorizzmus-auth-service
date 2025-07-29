@@ -6,13 +6,14 @@ import com.vim.algorizzmusauthservice.application.mapper.toUserResponse
 import com.vim.algorizzmusauthservice.application.request.AuthenticationRequest
 import com.vim.algorizzmusauthservice.application.request.ForgotPasswordConfirmationRequest
 import com.vim.algorizzmusauthservice.application.request.ForgotPasswordEmailRequest
+import com.vim.algorizzmusauthservice.application.request.RefreshTokenRequest
 import com.vim.algorizzmusauthservice.application.request.RegistrationRequest
 import com.vim.algorizzmusauthservice.application.request.VerificationRequest
 import com.vim.algorizzmusauthservice.application.response.AuthResponse
 import com.vim.algorizzmusauthservice.application.response.UserResponse
 import com.vim.algorizzmusauthservice.application.security.JwtGenerator
+import com.vim.algorizzmusauthservice.service.RefreshTokenService
 import com.vim.algorizzmusauthservice.service.UserService
-import com.vim.algorizzmusauthservice.service.exception.UserNotVerifiedException
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -30,6 +31,7 @@ class UserRestController(
     private val authenticationManager: AuthenticationManager,
     private val jwtGenerator: JwtGenerator,
     private val passwordEncoder: PasswordEncoder,
+    private val refreshTokenService: RefreshTokenService,
 ) : UserController {
     @PostMapping("/register")
     override fun registerUser(
@@ -60,8 +62,9 @@ class UserRestController(
         val authentication = authenticationManager.authenticate(authenticationToken)
         val accessToken = jwtGenerator.generateToken(authentication, TokenType.ACCESS)
         val refreshToken = jwtGenerator.generateToken(authentication, TokenType.REFRESH)
-        val user = userService.loadUserByUsername(authenticationRequest.username)
-        if (!user.isVerified) throw UserNotVerifiedException("User ${user.username} not verified")
+        userService.isUserVerified(authenticationRequest.username)
+
+        refreshTokenService.save(refreshToken, authenticationRequest.username)
 
         return ResponseEntity.ok(AuthResponse(accessToken, refreshToken))
     }
@@ -79,5 +82,22 @@ class UserRestController(
         val password = passwordEncoder.encode(forgotPasswordConfirmationRequest.newPassword)
         userService.resetUserPasswordByCode(forgotPasswordConfirmationRequest.code, password)
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/refresh-token")
+    override fun refreshToken(
+        @RequestBody @Valid refreshTokenRequest: RefreshTokenRequest,
+    ): ResponseEntity<AuthResponse> {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.refreshToken)
+        val username = jwtGenerator.extractUsername(refreshTokenRequest.refreshToken)
+        val userDetails = userService.loadUserByUsername(username)
+        val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+
+        val accessToken = jwtGenerator.generateToken(authentication, TokenType.ACCESS)
+        val refreshToken = jwtGenerator.generateToken(authentication, TokenType.REFRESH)
+
+        refreshTokenService.save(refreshToken, username)
+
+        return ResponseEntity.ok(AuthResponse(accessToken, refreshToken))
     }
 }

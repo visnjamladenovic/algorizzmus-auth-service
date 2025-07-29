@@ -4,6 +4,7 @@ import com.vim.algorizzmusauthservice.datasource.UserRepository
 import com.vim.algorizzmusauthservice.datasource.database.entity.UserEntity
 import com.vim.algorizzmusauthservice.service.exception.UserAlreadyExistsException
 import com.vim.algorizzmusauthservice.service.exception.UserNotFoundException
+import com.vim.algorizzmusauthservice.service.exception.UserNotVerifiedException
 import com.vim.algorizzmusauthservice.service.mapper.toUserDTO
 import com.vim.algorizzmusauthservice.service.mapper.toUserEntity
 import com.vim.algorizzmusauthservice.service.model.UserDTO
@@ -56,6 +57,15 @@ class UserService(
         resetUserPassword(user, newPassword)
 
         emailVerificationCodeService.deleteById(userCode.id)
+    }
+
+    fun isUserVerified(username: String) {
+        val user = loadUserByUsername(username)
+        if (!user.isVerified) {
+            throw UserNotVerifiedException(
+                "User ${user.username} not verified",
+            )
+        }
     }
 
     private fun resetUserPassword(
